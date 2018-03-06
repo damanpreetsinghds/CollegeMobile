@@ -263,13 +263,30 @@ angular.module('myApp.controllers', []).
             //alert ("Home Controller called");
             //setTimeout(function () {
                             // alert("aa");
+                             $rootScope.$on("mobile-angular-ui.toggle.toggled", function(event, data) {
+                                               // alert(JSON.stringify(data));
+                                            if(data == "mainSidebar"){
+                                                if($rootScope.blackOverlay == undefined || $rootScope.blackOverlay == null){
+                                                    $rootScope.blackOverlay=false;
+                                                }
+                                                if($rootScope.blackOverlay == false){
+                                                    $rootScope.blackOverlay=true;
+                                                }else{
+                                                    $rootScope.blackOverlay=false;
+                                                }
+                                                $rootScope.$apply();
+                                             }
+                                            
+                                              });
+
             if(!$rootScope.homeDownloadCompleteAdded) {
                 $rootScope.$on("onDownloadComplete", function(event, data) {
                     $.unblockUI();
-                    $route.reload();
+                    //$route.reload();
                     $rootScope.$apply(function () {
                         //$location.path("/home");
                         //$location.path("/app/FoodDeals/FoodDeals");
+                        MyCampusApp.fillRootScopeForHome($rootScope, $sce, tenant, $window, $location, $route, $http,  $scope, $compile);
                     });
                 });
                 $rootScope.homeDownloadCompleteAdded = true;
@@ -479,17 +496,38 @@ angular.module('myApp.controllers', []).
     .controller('AppCtrl', ['$scope', '$routeParams', '$compile', '$http', '$rootScope', '$sce', '$window',
         '$location',
         function ($scope, $routeParams, $compile, $http, $rootScope, $sce, $window, $location) {
+                            $rootScope.blackOverlay=false;
+                            $rootScope.toggleSidebar=function(){
+                            $rootScope.toggle("mainSidebar");
+                            /*if($rootScope.blackOverlay == false){
+                                $rootScope.blackOverlay=true;
+                            }else{
+                                $rootScope.blackOverlay=false;
+                            }*/
+                            }
             $rootScope.myswiperight = function() {    
                 if (!$("body").hasClass("sidebar-left-in")) {
                     $rootScope.toggle("mainSidebar");
                 }
+                            
+                            /*if($rootScope.blackOverlay == false){
+                            $rootScope.blackOverlay=true;
+                            }else{
+                            $rootScope.blackOverlay=false;
+                            }*/
 
             }
             $rootScope.myswipeleft = function() {
                 if ($("body").hasClass("sidebar-left-in")) {
                     $rootScope.toggle("mainSidebar");
                 }
-            }  
+                
+                            /*if($rootScope.blackOverlay == false){
+                            $rootScope.blackOverlay=true;
+                            }else{
+                            $rootScope.blackOverlay=false;
+                            }*/
+            }
             MyCampusApp.homeScreenDisplayed = false;
             $scope.appname = $routeParams.appid;
             $scope.pageid = $routeParams.pageid;

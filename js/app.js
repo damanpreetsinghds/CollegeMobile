@@ -76,7 +76,7 @@ document.addEventListener('deviceready',onDeviceReady, false);
 
 var MyCampusApp = {
     config : {
-        tenant : "LaxmiBai",
+        tenant : "INMANTEC",
         serverUrl : "https://kryptos.kryptosmobile.com",
         tenantFolder : function(device, tenant) {
             if(device.platform == 'Android') {
@@ -147,23 +147,24 @@ var MyCampusApp = {
                 storedMetadata = data;
 
                 if(window.device && data.pushconfig) {
-                    MyCampusApp.activatePushNotification(tenantid, data.pushconfig);
+                    MyCampusApp.activatePushNotification(tenantid, data.pushconfig,$http);
                 }
                // var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Initializing..</h3></div>';
                 //var message = '<div style="margin:auto;position:fixed;left:0px;right:0px;vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Initializing..</h3></div>';
                 //$.blockUI({message : message});
-                                                       $.blockUI({
-                                                                 message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
-                                                                 });
+                $.blockUI({
+                         message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                });
                 setTimeout(function() {
                     $.unblockUI();
+                    //alert($.jStorage.get('launchedonce'));
+                           
                     if ($.jStorage.get('launchedonce')) {
                         $route.reload();
                     }else {
                         $route.reload();
                         $rootScope.$apply(function () {
-                            //$location.path("/help");
-                        $location.path("/home");
+                            $location.path("/home");
                         });
                     }
                 },100);
@@ -176,7 +177,7 @@ var MyCampusApp = {
 			if(!$rootScope.imageoptimized) {
                 if(window.device && storedMetadata.pushconfig) {
                     
-                    MyCampusApp.activatePushNotification(storedMetadata.tenantid, storedMetadata.pushconfig);
+                    MyCampusApp.activatePushNotification(storedMetadata.tenantid, storedMetadata.pushconfig,$http);
                     
                 }
                 
@@ -210,7 +211,7 @@ var MyCampusApp = {
             }catch(ex) {
                 
             }
-        }, 2000);
+        }, 4000);
         //Store update bug fix end (Nick)
 
         if(storedMetadata) {
@@ -502,7 +503,7 @@ var MyCampusApp = {
         $http.post(url + "/metagate/metadata/" + tenant + "?callback=JSON_CALLBACK", {source: data.source, id : data.id, device: window.device}).
             success(function(data) {
                 if(window.device && data.pushconfig) {
-                    MyCampusApp.activatePushNotification(tenant, data.pushconfig);
+                    MyCampusApp.activatePushNotification(tenant, data.pushconfig,$http);
                 }
                 MyCampusApp.refreshMetdata(data, $rootScope, $scope, $sce, tenant, url, logosDirPath, $route, $compile);
                 //$.jStorage.set(tenant + '-metadata', data);
@@ -552,13 +553,14 @@ var MyCampusApp = {
             }
         });
         $rootScope.customStyle = $sce.trustAs($sce.CSS, data.customStyle);
-        try {
+        /** AK Commenting **/
+        /**try {
             var data1 = $compile($(data.homeScreenTemplate))($scope);
             $("#homecontent").html(data1);
             //alert("aa");
         }catch(exce) {
             //Ignore..
-        }
+        }**/
 
         $('#customstyle').html(data.customStyle);
 
@@ -881,41 +883,45 @@ var MyCampusApp = {
             });
     },
 
-    activatePushNotification : function(tenantId, pushconfig) {
+    activatePushNotification : function(tenantId, pushconfig,$http) {
         try {
-            var appId = pushconfig.ApplicationId;
-            var clientKey = pushconfig.ClientKey;
-            parsePlugin.initialize(appId, clientKey, function() {
-                //alert('Parse initialize success');
-            }, function(e) {
-                //alert('Parse initialize error');
-            });
-
-            parsePlugin.getInstallationId(function(id) {
-                //alert(id);
-            }, function(e) {
-                //alert('error');
-            });
-
-            parsePlugin.getSubscriptions(function(subscriptions) {
-                //alert(subscriptions);
-            }, function(e) {
-                //alert('error');
-            });
-
-            parsePlugin.subscribe(tenantId, function() {
-                //alert('OK');
-            }, function(e) {
-                //alert('error');
-            });
-
-            /*parsePlugin.unsubscribe('SampleChannel', function(msg) {
-             alert('OK');
-             }, function(e) {
-             alert('error');
-             });*/
-        }catch(e) {
-
+            if ($.jStorage.get("deviceID") == null || $.jStorage.get("deviceID") == undefined) {
+                MyCampusApp.rootScope.push = PushNotification.init({
+                                                                   android: {
+                                                                   senderID: "722633077489"
+                                                                   },
+                                                                   browser: {
+                                                                   pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+                                                                   },
+                                                                   ios: {
+                                                                   alert: "true",
+                                                                   badge: "true",
+                                                                   sound: "true"
+                                                                   },
+                                                                   windows: {}
+                                                                   });
+                
+                MyCampusApp.rootScope.push.on('registration', function(data) {
+                                              var devicePushID = data.registrationId;
+                                              //alert(devicePushID);
+                                              var pushDeviceData = {
+                                              "tenant": MyCampusApp.rootScope.tenant,
+                                              "id": devicePushID,
+                                              "type": device.platform,
+                                              "channel": "all"
+                                              };
+                                              $http.post("https://push.kryptosmobile.com/kryptosds/push/adddeviceToChannel", pushDeviceData).success(function(response) {
+                                                                                                                                              $.jStorage.set("deviceID", devicePushID);
+                                                                                                                                              //alert(JSON.stringify(response));
+                                                                                                                                              }).
+                                              error(function(err) {
+                                                    alert("err" + JSON.stringify(response));
+                                                    });
+                                              
+                                              });
+            }
+        } catch (e) { 
+            //alert(e)
         }
 
     },
