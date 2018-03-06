@@ -96,11 +96,10 @@
         
         <gap:plugin name="cordova-plugin-whitelist" source="npm" />
         <gap:plugin name="cordova-plugin-globalization" source="npm" />
-             <gap:plugin name="cordova-plugin-camera" source="npm" spec="2.4.1" />
-
+        <plugin name="cordova-plugin-camera" source="npm">
             <variable name="CAMERA_USAGE_DESCRIPTION" value="to send notification" />
             <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="to send notification" />
-        
+        </plugin>
         <gap:plugin name="cordova-plugin-actionsheet" source="npm" />
         <gap:plugin name="cordova-plugin-x-socialsharing" source="npm" />
         
