@@ -2,9 +2,9 @@
     <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id = "com.kryptosmobile.jawati" version   = "1.0.0">
-        <name>Jawati University</name>
-        <description>Jawati University</description>
-        <author href="http://kryptosmobile.com" email="info@kryptosmobile.com">Jawati University</author>
+        <name>Jiwaji University</name>
+        <description>Jiwaji University</description>
+        <author href="http://kryptosmobile.com" email="info@kryptosmobile.com">Jiwaji University</author>
         <feature name="http://api.phonegap.com/1.0/device" />
         <feature name="http://api.phonegap.com/1.0/geolocation"/>
        <preference name="phonegap-version" />
